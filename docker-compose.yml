@@ -1,0 +1,28 @@
+version: '2'
+# define all services
+services:
+  # our service is called CakePHP ;-)
+  cakephp:
+    # we want to use the image which is build from our Dockerfile
+    build: ./webapp
+    # apache is running on port 80 but we want to expose this to port 4000 on our local machine
+    container_name: webapp
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    # we mount the working dir into the container, handy for development
+    volumes:
+      - ./webapp:/var/www/html/
+      - ./php.ini:/usr/local/etc/php/conf.d/php.ini
+      - ./000-default.conf:/etc/apache2/sites-enabled/000-default.conf
+      - ./security.conf:/etc/apache2/conf-available/security.conf
+      - ./security.conf:/etc/apache2/conf-enabled/security.conf
+      - ./cert/domain.com.crt:/etc/ssl/domain.com.crt
+      - ./cert/domain.com.key:/etc/ssl/domain.com.key
+      - ./cert/domain.com.ca-bundle:/etc/ssl/domain.com.ca-bundle
+
+      #- ./php-ini:/usr/local/etc/php/conf.d/
+    environment:
+      - SECURITY_SALT=44d79b5a2e1c9f57b7bc62f368b2eb82123317d7d666c3ef52fa55f3a450f967
+
